@@ -13,15 +13,10 @@ Need these routes:
 - page so users can find each other(Look to create new rooms)
 - rooms(places where users commmunicate to each other using web sockets; when users online, open ws for sending. If the other user is online, open ws for recieving.)
 
-Involve cookies
-*/
-
-/*
-Tables
-- User: id, username, password
-- Chats: comment, uid_1, uid_2, time
+Involve cookies:
+How does one use cookies?
 */
 
 func main() {
-	fmt.Println("Start pproject lol")
+	fmt.Println("Start project lol")
 }
