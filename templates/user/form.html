@@ -1,0 +1,17 @@
+{{define "Form"}}
+<form>
+  <label for="username">username</label>
+  <input type="text" name="username" value="">
+  <label for="password">password</label>
+  <input type="password" name="password" value="">
+  {if .Type}
+  <label for="password_again">re-enter password</label>
+  <input type="password_again" name="password_again" value="">
+  {{end}}
+  {{if .Type}}
+  <label for="new_password">New password</label>
+  <input type="" name="new_password" value="">
+  <label for="new_password_again">re-eneter New password</label>
+  <input type="" name="new_password_again" value="">
+  {{end}}
+</form>
