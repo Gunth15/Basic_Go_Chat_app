@@ -11,7 +11,7 @@ import (
 
 // gets user from database.
 // produces error if the user does not exist or invalid credentials.
-func Get_user(db *sql.DB, id uint) (User, error) {
+func Get_user(db *sql.DB, id int) (User, error) {
 	var user User
 
 	stmnt, err := db.Prepare("SELECT id, username, password FROM Users WHERE id=?;")

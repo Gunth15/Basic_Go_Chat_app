@@ -36,8 +36,8 @@ type NewChat struct {
 }
 
 type Chat struct {
-	ID       int
-	Sender   int
-	Receiver int
-	Body     string
+	ID       int    `json:"id"`
+	Sender   int    `json:"sender"`
+	Receiver int    `json:"receiver"`
+	Body     string `json:"body"`
 }
