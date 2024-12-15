@@ -1,14 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Login</title>
-</head>
-
-<body>
-  Login here
-</body>
-
-</html>
+{{template "base"}}
+{{define "title"}}Login{{end}}
+{{define "content"}}
+{{template "form" .}}
+{{end}}

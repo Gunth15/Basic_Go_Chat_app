@@ -30,10 +30,11 @@ func main() {
 		log.Fatal(err)
 	}
 
-	tmpl, err := template.ParseFS(os.DirFS("./templates/"), "*.html", "*/*.html")
+	tmpl, err := template.ParseFS(os.DirFS("./templates/"), "*/*.html")
 	if err != nil {
 		log.Fatal(err)
 	}
+	log.Printf("All files are %v", tmpl.Name())
 
 	ctxt := context.Ctxt{
 		Db:   db,
@@ -42,7 +43,10 @@ func main() {
 
 	http.HandleFunc("GET /login/", ctxt.GetLogin)
 	http.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
-		ctxt.Tmpl.ExecuteTemplate(w, "landing.html", nil)
+		err := ctxt.Tmpl.ExecuteTemplate(w, "landing.html", nil)
+		if err != nil {
+			log.Print(err)
+		}
 	})
 	http.HandleFunc("GET /signup/", ctxt.GetSignup)
 	http.HandleFunc("GET /update/", ctxt.GetUpdateLogin)
