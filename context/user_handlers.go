@@ -12,18 +12,18 @@ type FormData struct {
 }
 
 func (ctxt *Ctxt) GetProfile(w http.ResponseWriter, r *http.Request) {
-	ctxt.Tmpl.ExecuteTemplate(w, "profile.html", nil)
+	ctxt.Tmpls["profile"].ExecuteTemplate(w, "profile.html", nil)
 }
 
 func (ctxt *Ctxt) GetSignup(w http.ResponseWriter, r *http.Request) {
-	ctxt.Tmpl.ExecuteTemplate(w, "signup.html", nil)
+	ctxt.Tmpls["signup"].ExecuteTemplate(w, "signup.html", nil)
 }
 
 func (ctxt *Ctxt) PostSignup(w http.ResponseWriter, r *http.Request) {
 }
 
 func (ctxt *Ctxt) GetLogin(w http.ResponseWriter, r *http.Request) {
-	ctxt.Tmpl.ExecuteTemplate(w, "login.html", nil)
+	ctxt.Tmpls["login"].ExecuteTemplate(w, "login.html", nil)
 }
 
 func (ctxt *Ctxt) PostLogin(w http.ResponseWriter, r *http.Request) {
@@ -35,7 +35,7 @@ func (ctxt *Ctxt) GetUpdateLogin(w http.ResponseWriter, r *http.Request) {
 		IsUpdate: true,
 		Url:      "/update",
 	}
-	err := ctxt.Tmpl.ExecuteTemplate(w, "update.html", initform)
+	err := ctxt.Tmpls["update"].ExecuteTemplate(w, "update.html", initform)
 	if err != nil {
 		log.Fatal(err)
 	}

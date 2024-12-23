@@ -14,7 +14,7 @@ import (
 // All methods are handlers for a http route
 type Ctxt struct {
 	Db    *sql.DB
-	Tmpl  *template.Template
+	Tmpls map[string]*template.Template
 	Users interface {
 		Get(*sql.DB, int) (database.User, error)
 		New(*sql.DB, database.NewUser) (database.User, error)

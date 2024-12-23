@@ -5,7 +5,6 @@ import (
 	"html/template"
 	"log"
 	"net/http"
-	"os"
 
 	"github.com/chat_app/context"
 
@@ -30,20 +29,45 @@ func main() {
 		log.Fatal(err)
 	}
 
-	tmpl, err := template.ParseFS(os.DirFS("./templates/"), "*/*.html")
+	logint, err := template.ParseFiles("./templates/base/base.html", "./templates/user/form.html", "./templates/user/login.html")
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Printf("All files are %v", tmpl.Name())
+
+	updatet, err := template.ParseFiles("./templates/base/base.html", "./templates/user/form.html", "./templates/user/update.html")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	landingt, err := template.ParseFiles("./templates/base/base.html", "./templates/base/landing.html")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	profilet, err := template.ParseFiles("./templates/base/base.html", "./templates/user/profile.html")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	signupt, err := template.ParseFiles("./templates/base/base.html", "./templates/user/form.html", "./templates/user/signup.html")
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	ctxt := context.Ctxt{
-		Db:   db,
-		Tmpl: tmpl,
+		Db: db,
+		Tmpls: map[string]*template.Template{
+			"update":  updatet,
+			"landing": landingt,
+			"login":   logint,
+			"profile": profilet,
+			"signup":  signupt,
+		},
 	}
 
 	http.HandleFunc("GET /login/", ctxt.GetLogin)
 	http.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
-		err := ctxt.Tmpl.ExecuteTemplate(w, "landing.html", nil)
+		err := ctxt.Tmpls["landing"].ExecuteTemplate(w, "landing.html", nil)
 		if err != nil {
 			log.Print(err)
 		}
