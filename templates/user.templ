@@ -1,29 +1,29 @@
 package templates
 
 templ Login(url string) {
-@Base("Login") {
-<h1>Login</h1>
-@form(url, "")
-}
+	@Base("Login") {
+		<h1>Login</h1>
+		@form(url, "")
+	}
 }
 
 templ Signup(url string) {
-@Base("Signup") {
-<h1>Signup</h1>
-@form(url, "new")
-}
+	@Base("Signup") {
+		<h1>Signup</h1>
+		@form(url, "new")
+	}
 }
 
 templ Update(url string) {
-@Base("Update Login") {
-<h1>Update</h1>
-@form(url, "update")
-}
+	@Base("Update Login") {
+		<h1>Update</h1>
+		@form(url, "update")
+	}
 }
 
 templ Profile() {
-@Base("Profile") {
-<h1>Profile</h1>
-This is a profile
-}
+	@Base("Profile") {
+		<h1>Profile</h1>
+		This is a profile
+	}
 }
