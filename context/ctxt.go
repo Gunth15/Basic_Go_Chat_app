@@ -2,19 +2,12 @@ package context
 
 import (
 	"database/sql"
-	"html/template"
 
 	"github.com/chat_app/database"
-
-	_ "github.com/mattn/go-sqlite3"
 )
 
-// The environment for the application which includes the tempkating engine and the database connection
-// Also controls queries for both models
-// All methods are handlers for a http route
 type Ctxt struct {
 	Db    *sql.DB
-	Tmpls map[string]*template.Template
 	Users interface {
 		Get(*sql.DB, int) (database.User, error)
 		New(*sql.DB, database.NewUser) (database.User, error)
