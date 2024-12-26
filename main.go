@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"log"
 	"net/http"
 
@@ -24,13 +25,20 @@ How does one use cookies?
 */
 
 func main() {
-	//db, err := sql.Open("sqlite3", "./database/chat_app.db")
-	//if err != nil {
-	//	log.Fatal(err)
-	//}
+	db, err := sql.Open("sqlite3", "./database/chat_app.db")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+
+	ctxt := context.Ctxt{
+		Db:    db,
+		Users: &context.QueryUsers{},
+		Chats: &context.QueryChats{},
+	}
 
 	main_mux := http.NewServeMux()
-	main_mux.Handle("/user/", http.StripPrefix("/user", context.NewUserMux("/user/")))
+	main_mux.Handle("/user/", http.StripPrefix("/user", context.NewUserMux("/user/", &ctxt)))
 	main_mux.Handle("GET /land", templ.Handler(templates.Landing()))
 
 	server := &http.Server{

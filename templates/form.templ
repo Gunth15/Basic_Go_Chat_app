@@ -14,20 +14,21 @@ templ form(url, form_type string) {
 		if form_type == "new" {
 			@new()
 		}
+		<input type="submit" name="complete"/>
 	</form>
 }
 
-templ update() {
+templ new() {
 	<label for="password_again">re-enter password</label>
-	<input type="password_again" name="password_again" value=""/>
+	<input type="password" name="password_again" value=""/>
 	<br/>
 }
 
-templ new() {
+templ update() {
 	<label for="new_password">New password</label>
-	<input type="" name="new_password" value=""/>
+	<input type="password" name="new_password" value=""/>
 	<br/>
 	<label for="new_password_again">re-eneter New password</label>
-	<input type="" name="new_password_again" value=""/>
+	<input type="password" name="new_password_again" value=""/>
 	<br/>
 }
