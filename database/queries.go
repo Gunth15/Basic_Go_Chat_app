@@ -2,7 +2,7 @@ package database
 
 import (
 	"database/sql"
-	"errors"
+	"fmt"
 
 	"golang.org/x/crypto/bcrypt"
 
@@ -32,7 +32,7 @@ func New_user(db *sql.DB, new_user NewUser) (User, error) {
 	var user User
 
 	if new_user.Password != new_user.PasswordAgain {
-		return user, errors.New("Passwords do not match given %s and returned %s")
+		return user, fmt.Errorf("Passwords do not match given %s and returned %s", new_user.Password, new_user.PasswordAgain)
 	}
 
 	// Salt password returns errr if password is too short or too long to hash
@@ -53,6 +53,7 @@ func New_user(db *sql.DB, new_user NewUser) (User, error) {
 	if err = stmnt.QueryRow(&new_user.Username, &user.Password).Scan(&user.ID); err != nil {
 		return user, err
 	}
+	user.Username = new_user.Username
 
 	return user, nil
 }
@@ -102,7 +103,7 @@ func Update_user(db *sql.DB, update_user *UpdateUser) (User, error) {
 	defer stmnt.Close()
 
 	err = stmnt.QueryRow().Scan(&user.Username, &user.Password, &user.ID)
-	return user, nil
+	return user, err
 }
 
 // Gets user by username and password
