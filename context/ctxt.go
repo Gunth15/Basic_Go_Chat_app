@@ -6,6 +6,8 @@ import (
 	"github.com/chat_app/database"
 )
 
+// Ctxt contains interfaces for database querying.
+// Also includes handlers for accesing databse
 type Ctxt struct {
 	Db    *sql.DB
 	Users interface {
@@ -13,6 +15,7 @@ type Ctxt struct {
 		New(*sql.DB, database.NewUser) (database.User, error)
 		All(*sql.DB) ([]database.User, error)
 		Update(*sql.DB, *database.UpdateUser) (database.User, error)
+		Login(*sql.DB, database.LoginUser) (database.User, error)
 	}
 	Chats interface {
 		New(*sql.DB, database.NewChat) (database.Chat, error)
@@ -40,6 +43,10 @@ func (qu *QueryUsers) Get(db *sql.DB, id int) (database.User, error) {
 
 func (qu *QueryUsers) New(db *sql.DB, new database.NewUser) (database.User, error) {
 	return database.New_user(db, new)
+}
+
+func (qu *QueryUsers) Login(db *sql.DB, login database.LoginUser) (database.User, error) {
+	return database.Login_user(login, db)
 }
 
 func (qu *QueryUsers) All(db *sql.DB) ([]database.User, error) {
