@@ -7,6 +7,7 @@ import (
 
 	"github.com/a-h/templ"
 	"github.com/chat_app/context"
+	"github.com/chat_app/middleware"
 	"github.com/chat_app/templates"
 
 	_ "github.com/mattn/go-sqlite3"
@@ -38,12 +39,12 @@ func main() {
 	}
 
 	main_mux := http.NewServeMux()
-	main_mux.Handle("/user/", http.StripPrefix("/user", context.NewUserMux("/user/", &ctxt)))
-	main_mux.Handle("GET /land", templ.Handler(templates.Landing()))
+	main_mux.Handle("/user/", context.NewUserMux("/user", &ctxt))
+	main_mux.Handle("GET /{$}", templ.Handler(templates.Landing()))
 
 	server := &http.Server{
 		Addr:    ":8080",
-		Handler: main_mux,
+		Handler: middleware.Logger(main_mux),
 	}
 
 	log.Printf("Running on localhost%s", server.Addr)
