@@ -21,7 +21,7 @@ func Get_user(db *sql.DB, id int) (User, error) {
 
 	defer stmnt.Close()
 
-	err = stmnt.QueryRow(&id).Scan(&user.ID, &user.Username, &user.Password)
+	err = stmnt.QueryRow(id).Scan(&user.ID, &user.Username, &user.Password)
 
 	return user, err
 }
@@ -36,7 +36,7 @@ func New_user(db *sql.DB, new_user NewUser) (User, error) {
 	}
 
 	// Salt password returns errr if password is too short or too long to hash
-	hashed_passwrd, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	hashed_passwrd, err := bcrypt.GenerateFromPassword([]byte(new_user.Password), bcrypt.DefaultCost)
 	if err != nil {
 		return user, err
 	}
