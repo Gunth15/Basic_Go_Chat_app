@@ -13,12 +13,13 @@ import (
 // Initializes a new router for User related routes
 func NewUserMux(preface_url string, ctxt *Ctxt) *http.ServeMux {
 	mux := http.NewServeMux()
-	mux.Handle("GET /signup", templ.Handler(templates.Signup(preface_url+"signup")))
-	mux.HandleFunc("POST /signup", ctxt.PostSignup)
-	mux.Handle("GET /login", templ.Handler(templates.Login(preface_url+"login")))
-	mux.HandleFunc("POST /login", ctxt.PostLogin)
-	mux.Handle("GET /update", templ.Handler(templates.Update(preface_url+"update")))
-	mux.HandleFunc("POST /update", ctxt.PostUpdateLogin)
+	mux.Handle("GET /signup/", templ.Handler(templates.Signup(preface_url+"signup/")))
+	mux.HandleFunc("POST /signup/", ctxt.PostSignup)
+	mux.Handle("GET /login/", templ.Handler(templates.Login(preface_url+"login/")))
+	mux.HandleFunc("POST /login/", ctxt.PostLogin)
+	mux.Handle("GET /update/", templ.Handler(templates.Update(preface_url+"update/")))
+	mux.HandleFunc("POST /update/", ctxt.PostUpdateLogin)
+	mux.Handle("GET /profile/", templ.Handler(templates.Profile()))
 	return mux
 }
 
@@ -48,7 +49,7 @@ func (ctxt *Ctxt) PostSignup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	log.Printf("Added user: %s", new_user.Username)
-	http.Redirect(w, r, "/user/profile", http.StatusAccepted)
+	http.Redirect(w, r, "/user/profile/", http.StatusAccepted)
 }
 
 func (ctxt *Ctxt) PostLogin(w http.ResponseWriter, r *http.Request) {
@@ -75,7 +76,7 @@ func (ctxt *Ctxt) PostLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	log.Printf("User %v logged in", user.Username)
-	http.Redirect(w, r, "/user/profile", http.StatusAccepted)
+	http.Redirect(w, r, "/user/profile/", http.StatusAccepted)
 }
 
 func (ctxt *Ctxt) PostUpdateLogin(w http.ResponseWriter, r *http.Request) {
@@ -104,5 +105,5 @@ func (ctxt *Ctxt) PostUpdateLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	log.Printf("User %s updated login info", user.Username)
-	http.Redirect(w, r, "/user/profile", http.StatusAccepted)
+	http.Redirect(w, r, "/user/profile/", http.StatusAccepted)
 }

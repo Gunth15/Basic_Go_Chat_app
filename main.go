@@ -39,7 +39,7 @@ func main() {
 	}
 
 	main_mux := http.NewServeMux()
-	main_mux.Handle("/user/", context.NewUserMux("/user", &ctxt))
+	main_mux.Handle("/user/", http.StripPrefix("/user", context.NewUserMux("/user/", &ctxt)))
 	main_mux.Handle("GET /{$}", templ.Handler(templates.Landing()))
 
 	server := &http.Server{
