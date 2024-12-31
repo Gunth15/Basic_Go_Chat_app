@@ -9,8 +9,9 @@ import (
 // Ctxt contains interfaces for database querying.
 // Also includes handlers for accesing databse
 type Ctxt struct {
-	Db    *sql.DB
-	Users interface {
+	Db     *sql.DB
+	Secret []byte
+	Users  interface {
 		Get(*sql.DB, int) (database.User, error)
 		New(*sql.DB, database.NewUser) (database.User, error)
 		All(*sql.DB) ([]database.User, error)

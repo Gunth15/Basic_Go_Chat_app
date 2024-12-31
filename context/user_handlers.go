@@ -49,7 +49,7 @@ func (ctxt *Ctxt) PostSignup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	log.Printf("Added user: %s", new_user.Username)
-	http.Redirect(w, r, "/user/profile/", http.StatusAccepted)
+	http.Redirect(w, r, "/user/profile/", http.StatusSeeOther)
 }
 
 func (ctxt *Ctxt) PostLogin(w http.ResponseWriter, r *http.Request) {
@@ -76,7 +76,10 @@ func (ctxt *Ctxt) PostLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	log.Printf("User %v logged in", user.Username)
-	http.Redirect(w, r, "/user/profile/", http.StatusAccepted)
+
+	ctxt.SetUserCookie(w, r, user)
+
+	http.Redirect(w, r, "/user/profile/", http.StatusSeeOther)
 }
 
 func (ctxt *Ctxt) PostUpdateLogin(w http.ResponseWriter, r *http.Request) {
@@ -105,5 +108,8 @@ func (ctxt *Ctxt) PostUpdateLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	log.Printf("User %s updated login info", user.Username)
-	http.Redirect(w, r, "/user/profile/", http.StatusAccepted)
+
+	ctxt.SetUserCookie(w, r, user)
+
+	http.Redirect(w, r, "/user/profile/", http.StatusSeeOther)
 }

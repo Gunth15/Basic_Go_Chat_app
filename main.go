@@ -4,11 +4,13 @@ import (
 	"database/sql"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/a-h/templ"
 	"github.com/chat_app/context"
 	"github.com/chat_app/middleware"
 	"github.com/chat_app/templates"
+	"github.com/joho/godotenv"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -26,16 +28,22 @@ How does one use cookies?
 */
 
 func main() {
-	db, err := sql.Open("sqlite3", "./database/chat_app.db")
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	db, err := sql.Open("sqlite3", os.Getenv("DATABASE"))
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer db.Close()
 
 	ctxt := context.Ctxt{
-		Db:    db,
-		Users: &context.QueryUsers{},
-		Chats: &context.QueryChats{},
+		Db:     db,
+		Secret: []byte(os.Getenv("SECRET_KEY")),
+		Users:  &context.QueryUsers{},
+		Chats:  &context.QueryChats{},
 	}
 
 	main_mux := http.NewServeMux()
@@ -43,7 +51,7 @@ func main() {
 	main_mux.Handle("GET /{$}", templ.Handler(templates.Landing()))
 
 	server := &http.Server{
-		Addr:    ":8080",
+		Addr:    os.Getenv("PORT"),
 		Handler: middleware.Logger(main_mux),
 	}
 
