@@ -116,7 +116,10 @@ func (ctxt *Ctxt) PostUpdateLogin(w http.ResponseWriter, r *http.Request) {
 	}
 	log.Printf("User %s updated login info", user.Username)
 
-	cookies.Set(w, r, user, ctxt.Secret)
+	if err = cookies.Set(w, r, user, ctxt.Secret); err != nil {
+		log.Print(err)
+		http.Error(w, err.Error(), http.StatusBadRequest)
+	}
 
 	http.Redirect(w, r, "/user/profile/", http.StatusSeeOther)
 }

@@ -3,12 +3,14 @@ package main
 
 import (
 	"database/sql"
+	"encoding/gob"
 	"log"
 	"net/http"
 	"os"
 
 	"github.com/a-h/templ"
 	"github.com/chat_app/pkg/context"
+	"github.com/chat_app/pkg/database"
 	"github.com/chat_app/pkg/middleware"
 	"github.com/chat_app/web/templates"
 	"github.com/joho/godotenv"
@@ -29,6 +31,7 @@ How does one use cookies?
 */
 
 func main() {
+	gob.Register(&database.User{})
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal(err)
@@ -50,12 +53,12 @@ func main() {
 	main_mux := http.NewServeMux()
 	main_mux.Handle("/user/", http.StripPrefix("/user", context.NewUserMux("/user/", &ctxt)))
 	main_mux.Handle("GET /{$}", templ.Handler(templates.Landing()))
+	main_mux.Handle("/", http.FileServer(http.Dir("./web/static/")))
 
 	server := &http.Server{
 		Addr:    os.Getenv("PORT"),
 		Handler: middleware.Logger(main_mux),
 	}
-
 	log.Printf("Running on localhost%s", server.Addr)
 	defer log.Print("Shutting Down.......")
 	log.Fatal(server.ListenAndServe())

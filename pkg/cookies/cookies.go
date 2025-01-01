@@ -1,4 +1,3 @@
-// Package contains funtions for handling cookies
 package cookies
 
 import (
@@ -6,6 +5,7 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
+	"encoding/base64"
 	"encoding/gob"
 	"errors"
 	"fmt"
@@ -17,13 +17,14 @@ import (
 	"github.com/chat_app/pkg/database"
 )
 
-// Set uses AES-GCM to to encrypt and authorize cookie.
-func Set(w http.ResponseWriter, r *http.Request, user database.User, secret []byte) {
+// Set uses AES-GCM and base64 to encrypt and authorize the cookie.
+//
+// Secret must be 128-125 Bits
+func Set(w http.ResponseWriter, r *http.Request, user database.User, secret []byte) error {
 	var buff bytes.Buffer
 	err := gob.NewEncoder(&buff).Encode(&user)
 	if err != nil {
-		log.Println(err)
-		http.Error(w, "server error", http.StatusInternalServerError)
+		return err
 	}
 
 	cookie := &http.Cookie{
@@ -36,35 +37,32 @@ func Set(w http.ResponseWriter, r *http.Request, user database.User, secret []by
 
 	block, err := aes.NewCipher(secret)
 	if err != nil {
-		log.Println(err)
-		http.Error(w, "server error", http.StatusInternalServerError)
+		return err
 	}
 
 	aesGCM, err := cipher.NewGCM(block)
 	if err != nil {
-		log.Println(err)
-		http.Error(w, "server error", http.StatusInternalServerError)
+		return err
 	}
 
 	nonce := make([]byte, aesGCM.NonceSize())
 	_, err = io.ReadFull(rand.Reader, nonce)
 	if err != nil {
-		log.Println(err)
-		http.Error(w, "server error", http.StatusInternalServerError)
+		return err
 	}
 
 	plaintext := fmt.Sprintf("%s:%s", cookie.Name, cookie.Value)
 
 	encryptedtext := aesGCM.Seal(nonce, nonce, []byte(plaintext), nil)
-
-	cookie.Value = string(encryptedtext)
+	b64string := base64.URLEncoding.EncodeToString(encryptedtext)
+	cookie.Value = string(b64string)
 
 	http.SetCookie(w, cookie)
-	http.Redirect(w, r, "/user/profile", http.StatusSeeOther)
+	return nil
 }
 
 // Get decrypts cookie and returns the User.
-func Get(w http.ResponseWriter, r *http.Request, secret []byte) (database.User, error) {
+func Get(r *http.Request, secret []byte) (database.User, error) {
 	var user database.User
 	cookie, err := r.Cookie("AwesomeKey")
 	if err != nil {
@@ -72,17 +70,18 @@ func Get(w http.ResponseWriter, r *http.Request, secret []byte) (database.User, 
 		return user, err
 	}
 
-	encryptedtext := cookie.Value
+	encryptedtext, err := base64.URLEncoding.Strict().DecodeString(cookie.Value)
+	if err != nil {
+		return user, err
+	}
 
 	block, err := aes.NewCipher(secret)
 	if err != nil {
-		log.Println(err)
 		return user, err
 	}
 
 	aesGCM, err := cipher.NewGCM(block)
 	if err != nil {
-		log.Println(err)
 		return user, err
 	}
 
@@ -98,21 +97,20 @@ func Get(w http.ResponseWriter, r *http.Request, secret []byte) (database.User, 
 
 	plaintext, err := aesGCM.Open(nil, []byte(nonce), []byte(ciphertext), nil)
 	if err != nil {
-		log.Println(err)
-		http.Error(w, "Invalid Cookie", http.StatusBadRequest)
+		return user, err
 	}
 
 	_, value, ok := strings.Cut(string(plaintext), ":")
 	if !ok {
-		log.Println(err)
-		http.Error(w, "Invalid Cookie", http.StatusBadRequest)
+		err = errors.New("Cookie is invalid")
+		return user, err
 	}
 
 	reader := strings.NewReader(value)
 
-	if err := gob.NewDecoder(reader).Decode(&user); err != nil {
-		log.Println(err)
-		http.Error(w, "server error", http.StatusInternalServerError)
+	if err = gob.NewDecoder(reader).Decode(&user); err != nil {
+		err = errors.New("Could not read cookie")
+		return user, err
 	}
 
 	return user, nil
