@@ -1,4 +1,4 @@
-package context
+package cookies
 
 import (
 	"bytes"
@@ -13,11 +13,11 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/chat_app/database"
+	"github.com/chat_app/pkg/database"
 )
 
-// Uses AES-GCM to to encrypt and authorize cookie
-func (ctxt *Ctxt) SetUserCookie(w http.ResponseWriter, r *http.Request, user database.User) {
+// Set uses AES-GCM to to encrypt and authorize cookie.
+func Set(w http.ResponseWriter, r *http.Request, user database.User, secret []byte) {
 	var buff bytes.Buffer
 	err := gob.NewEncoder(&buff).Encode(&user)
 	if err != nil {
@@ -33,7 +33,7 @@ func (ctxt *Ctxt) SetUserCookie(w http.ResponseWriter, r *http.Request, user dat
 		SameSite: http.SameSiteDefaultMode,
 	}
 
-	block, err := aes.NewCipher(ctxt.Secret)
+	block, err := aes.NewCipher(secret)
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "server error", http.StatusInternalServerError)
@@ -62,8 +62,8 @@ func (ctxt *Ctxt) SetUserCookie(w http.ResponseWriter, r *http.Request, user dat
 	http.Redirect(w, r, "/user/profile", http.StatusSeeOther)
 }
 
-// Decrypts cookie and returns the User
-func (ctxt *Ctxt) GetUserCookie(w http.ResponseWriter, r *http.Request) (database.User, error) {
+// Get decrypts cookie and returns the User.
+func Get(w http.ResponseWriter, r *http.Request, secret []byte) (database.User, error) {
 	var user database.User
 	cookie, err := r.Cookie("AwesomeKey")
 	if err != nil {
@@ -73,7 +73,7 @@ func (ctxt *Ctxt) GetUserCookie(w http.ResponseWriter, r *http.Request) (databas
 
 	encryptedtext := cookie.Value
 
-	block, err := aes.NewCipher(ctxt.Secret)
+	block, err := aes.NewCipher(secret)
 	if err != nil {
 		log.Println(err)
 		return user, err
@@ -117,5 +117,6 @@ func (ctxt *Ctxt) GetUserCookie(w http.ResponseWriter, r *http.Request) (databas
 	return user, nil
 }
 
-func (ctxt *Ctxt) RemoveCookie(w http.ResponseWriter, r *http.Request) {
+// Remove removes the cookie from client.
+func Remove(w http.ResponseWriter, r *http.Request) {
 }

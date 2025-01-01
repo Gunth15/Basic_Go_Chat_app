@@ -1,3 +1,4 @@
+// Package main runs chat_app server.
 package main
 
 import (
@@ -7,9 +8,9 @@ import (
 	"os"
 
 	"github.com/a-h/templ"
-	"github.com/chat_app/context"
-	"github.com/chat_app/middleware"
-	"github.com/chat_app/templates"
+	"github.com/chat_app/pkg/context"
+	"github.com/chat_app/pkg/middleware"
+	"github.com/chat_app/web/templates"
 	"github.com/joho/godotenv"
 
 	_ "github.com/mattn/go-sqlite3"

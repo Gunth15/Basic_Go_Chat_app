@@ -1,3 +1,4 @@
+// Package middleware includes handlers taht do some type of preprocessing beofr the main handlers.
 package middleware
 
 import (
@@ -6,7 +7,7 @@ import (
 	"time"
 )
 
-// Logs the current server request
+// Logger logs the current server request.
 func Logger(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()
@@ -15,6 +16,6 @@ func Logger(next http.Handler) http.Handler {
 	})
 }
 
-// Handlers passed to this middlware require login
+// Authenticate attempts to authenticate the user if they have the appropriate cookie.
 func Authenticate() {
 }

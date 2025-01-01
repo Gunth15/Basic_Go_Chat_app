@@ -1,16 +1,20 @@
+// Package context inludes handlers for chat_app and Ctxt struct.
+//
+// Ctxt stuct holds database connection and other resources  handlers may use.
 package context
 
 import (
 	"log"
 	"net/http"
 
-	"github.com/chat_app/database"
+	"github.com/chat_app/pkg/database"
 
 	"github.com/a-h/templ"
-	"github.com/chat_app/templates"
+	"github.com/chat_app/pkg/cookies"
+	"github.com/chat_app/web/templates"
 )
 
-// Initializes a new router for User related routes
+// NewUserMux initializes a new router for User related routes.
 func NewUserMux(preface_url string, ctxt *Ctxt) *http.ServeMux {
 	mux := http.NewServeMux()
 	mux.Handle("GET /signup/", templ.Handler(templates.Signup(preface_url+"signup/")))
@@ -23,6 +27,7 @@ func NewUserMux(preface_url string, ctxt *Ctxt) *http.ServeMux {
 	return mux
 }
 
+// PostSignup adds a new user to the server.
 func (ctxt *Ctxt) PostSignup(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
@@ -52,6 +57,7 @@ func (ctxt *Ctxt) PostSignup(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/user/profile/", http.StatusSeeOther)
 }
 
+// PostLogin verifies that a user exist in the databse.
 func (ctxt *Ctxt) PostLogin(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
@@ -77,11 +83,12 @@ func (ctxt *Ctxt) PostLogin(w http.ResponseWriter, r *http.Request) {
 	}
 	log.Printf("User %v logged in", user.Username)
 
-	ctxt.SetUserCookie(w, r, user)
+	cookies.Set(w, r, user, ctxt.Secret)
 
 	http.Redirect(w, r, "/user/profile/", http.StatusSeeOther)
 }
 
+// PostUpdateLogin updates a user's login information.
 func (ctxt *Ctxt) PostUpdateLogin(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
@@ -109,7 +116,7 @@ func (ctxt *Ctxt) PostUpdateLogin(w http.ResponseWriter, r *http.Request) {
 	}
 	log.Printf("User %s updated login info", user.Username)
 
-	ctxt.SetUserCookie(w, r, user)
+	cookies.Set(w, r, user, ctxt.Secret)
 
 	http.Redirect(w, r, "/user/profile/", http.StatusSeeOther)
 }

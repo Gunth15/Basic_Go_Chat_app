@@ -1,3 +1,4 @@
+// Package database provides access and creation of chat_app database.
 package database
 
 import (
