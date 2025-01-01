@@ -1,5 +1,5 @@
-// Package database provides access and creation of chat_app database.
-package database
+// Package initializes database
+package database_main
 
 import (
 	"database/sql"
@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	db, err := sql.Open("sqlite3", "./chat_app.db")
+	db, err := sql.Open("sqlite3", ".pkg/database/chat_app.db")
 	if err != nil {
 		log.Fatal(err)
 	}

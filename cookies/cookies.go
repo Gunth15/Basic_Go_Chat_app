@@ -1,4 +1,3 @@
-// Package contains funtions for handling cookies
 package cookies
 
 import (
@@ -14,7 +13,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/chat_app/pkg/database"
+	"github.com/chat_app/database"
 )
 
 // Set uses AES-GCM to to encrypt and authorize cookie.

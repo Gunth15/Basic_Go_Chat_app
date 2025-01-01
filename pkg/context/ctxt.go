@@ -3,7 +3,7 @@ package context
 import (
 	"database/sql"
 
-	"github.com/chat_app/database"
+	"github.com/chat_app/pkg/database"
 )
 
 // Ctxt contains interfaces for database querying.
@@ -24,7 +24,8 @@ type Ctxt struct {
 	}
 }
 
-// Implements the query interfaces for CTXT
+// QueryUsers satisfies the User interface and abstract queries form tha databse.
+// QueryChats satisfies the Chats interface and abstract queries form tha databse.
 type (
 	QueryUsers struct{}
 	QueryChats struct{}
