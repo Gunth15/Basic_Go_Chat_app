@@ -1,5 +1,7 @@
 package templates
 
+import "github.com/chat_app/pkg/database"
+
 templ Login(url string) {
 	@Base("Login") {
 		<h1>Login</h1>
@@ -21,9 +23,9 @@ templ Update(url string) {
 	}
 }
 
-templ Profile() {
+templ Profile(user database.User) {
 	@Base("Profile") {
 		<h1>Profile</h1>
-		This is a profile
+		This is { user.Username }'s profile
 	}
 }

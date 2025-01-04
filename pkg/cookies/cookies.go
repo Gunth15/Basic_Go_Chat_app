@@ -10,7 +10,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"strings"
 
@@ -66,7 +65,6 @@ func Get(r *http.Request, secret []byte) (database.User, error) {
 	var user database.User
 	cookie, err := r.Cookie("AwesomeKey")
 	if err != nil {
-		log.Println(err)
 		return user, err
 	}
 

@@ -4,6 +4,7 @@ import (
 	"database/sql"
 
 	"github.com/chat_app/pkg/database"
+	"github.com/gorilla/websocket"
 )
 
 // Ctxt contains interfaces for database querying.
@@ -22,6 +23,8 @@ type Ctxt struct {
 		New(*sql.DB, database.NewChat) (database.Chat, error)
 		UserAll(*sql.DB, int, int) ([]database.Chat, error)
 	}
+	Online      map[int]*websocket.Conn
+	Connections uint
 }
 
 // QueryUsers satisfies the User interface and abstract queries form tha databse.

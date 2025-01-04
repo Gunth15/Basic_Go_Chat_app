@@ -20,14 +20,10 @@ import (
 
 /*
 Need these routes:
-- landing page/ GET
 - logout button / Remove cookie
 - profile page/ GET(should be able to see current chat rooms)
 - page so users can find each other(Look to create new rooms)
 - rooms(places where users commmunicate to each other using web sockets; when users online, open ws for sending. If the other user is online, open ws for recieving.)
-
-Involve cookies:
-How does one use cookies?
 */
 
 func main() {
@@ -43,15 +39,17 @@ func main() {
 	}
 	defer db.Close()
 
+	secret := []byte(os.Getenv("SECRET_KEY"))
+
 	ctxt := context.Ctxt{
 		Db:     db,
-		Secret: []byte(os.Getenv("SECRET_KEY")),
+		Secret: secret,
 		Users:  &context.QueryUsers{},
 		Chats:  &context.QueryChats{},
 	}
 
 	main_mux := http.NewServeMux()
-	main_mux.Handle("/user/", http.StripPrefix("/user", context.NewUserMux("/user/", &ctxt)))
+	main_mux.Handle("/user/", http.StripPrefix("/user", context.NewUserMux("/user/", secret, &ctxt)))
 	main_mux.Handle("GET /{$}", templ.Handler(templates.Landing()))
 	main_mux.Handle("/", http.FileServer(http.Dir("./web/static/")))
 
